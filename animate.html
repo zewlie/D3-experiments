@@ -5,7 +5,7 @@ https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.10/d3.js"></script>
 <style>
 
 body {
-  background:url('https://meetmeinparadise.files.wordpress.com/2012/07/p8030257.jpg');
+  background:url('img/beach.jpg');
   background-size: cover;
 }
 
@@ -18,40 +18,8 @@ path {
   stroke-linecap: round;
 }
 
-.color1 {
-  stroke: #413E4A;
-  stroke-width: 6px;
-  stroke-opacity:0.3;
-  filter: url(#blur-this);
-}
-
-.color2 {
-  stroke: #73626E;
-  stroke-width: 4px;
-  stroke-opacity:0.3;
-  filter: url(#blur-this);
-}
-
-.color3 {
-  stroke: #B38184;
-  stroke-width: 4px;
-  stroke-opacity:0.6;
-  filter: url(#blur-this);
-}
-
-.color4 {
-  stroke: #F0B49E;
-  fill: #F0B49E;
-  stroke-width: 10px;
-  stroke-opacity:0.3;
-  filter: url(#blur-this);
-}
-
-.color5 {
-  stroke: #F7E4BE;
-  fill: #F7E4BE;
-  stroke-width: 4px;
-  stroke-opacity:0.6;
+.additions {
+  stroke-width: 12px;
   filter: url(#blur-this);
 }
 
@@ -65,21 +33,25 @@ path {
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script>
 
-// Visualization dimensions
+// =================================================
+// Based off the D3 Spermatozoa example by mbostock.
+// =================================================
+
+// Visualization dimensions.
 var width = 1200,
     height = 700;
 
-var n = 50, // # lines
-    m = randLength(), // length of lines
-    degrees = 120; // TODO
+var n = 50, // # of mosquitos
+    m = randLength(), // length of mosquitos
+    degrees = 120;
 
-var spermatozoa = d3.range(n).map(function() {
-  // Randomly position lines
+var mosquitos = d3.range(n).map(function() {
+  // Randomly position mosquitos.
   var x = Math.random() * width,
       y = Math.random() * height;
   return {
-    vx: Math.random() * 12, // TODO
-    vy: Math.random() * 12, // TODO
+    vx: Math.random() * 12,
+    vy: Math.random() * 12,
     path: d3.range(m).map(function() { return [x, y]; }),
     count: 0
   };
@@ -90,12 +62,12 @@ var svg = d3.select("body").append("svg")
     .attr("height", height);
 
 var g = svg.selectAll("g")
-    .data(spermatozoa)
+    .data(mosquitos)
     .enter().append("g");
 
 var colors = svg.selectAll("g")
     .attr("stroke", randColor)
-    .attr("stroke-opacity", "0.15");
+    .attr("stroke-opacity", "0.16");
 
 var defs = svg.selectAll("g")
     .append("defs");
@@ -103,7 +75,7 @@ var defs = svg.selectAll("g")
 // Create the filter.
 var filter = defs.append("filter")
   .attr("id", "blur-this")
-  .attr("height", "130%");
+  .attr("height", "200%");
 
 // Filter properties.
 filter.append("feGaussianBlur")
@@ -118,7 +90,7 @@ g.append("path")
 
 g.append("path")
     .datum(function(d) { return d.path; })
-    .attr("class", randColor);
+    .attr("class", "additions");
 
 g.append("path")
     .datum(function(d) { return d.path; })
@@ -131,10 +103,10 @@ d3.timer(function() {
 
   for (var i = -1; ++i < n;) {
 
-    var spermatozoon = spermatozoa[i],
-        path = spermatozoon.path,
-        dx = spermatozoon.vx,
-        dy = spermatozoon.vy,
+    var mosquito = mosquitos[i],
+        path = mosquito.path,
+        dx = mosquito.vx,
+        dy = mosquito.vy,
         x = path[0][0] += dx,
         y = path[0][1] += dy,
         speed = Math.sqrt(dx * dx + dy * dy),
@@ -142,10 +114,10 @@ d3.timer(function() {
         k1 = -5 - speed / 100;
 
     // Bounce off the walls.
-    if (x < 0 || x > width) spermatozoon.vx *= -1;
-    if (y < 0 || y > height) spermatozoon.vy *= -1;
+    if (x < 0 || x > width) mosquito.vx *= -1;
+    if (y < 0 || y > height) mosquito.vy *= -1;
 
-    // Swim!
+    // Move.
     for (var j = 0; ++j < m;) {
       var vx = x - path[j][0],
           vy = y - path[j][1],
@@ -167,7 +139,7 @@ function randColor(d) {
 }
 
 function randLength(d) {
-  return (Math.floor(Math.random() * 3) + 1);
+  return (Math.floor(Math.random() * 2) + 2);
 }
 
 function tailPath(d) {
